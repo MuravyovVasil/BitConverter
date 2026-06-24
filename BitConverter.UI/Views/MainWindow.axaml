@@ -1,0 +1,58 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:BitConverter.UI.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="450" d:DesignHeight="450"
+        x:Class="BitConverter.UI.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="BitConverter Pipeline">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <Grid RowDefinitions="*, Auto, 150" Margin="20">
+        
+        <Border Grid.Row="0" 
+                DragDrop.AllowDrop="True"
+                Background="#1E1E1E"
+                CornerRadius="8">
+            <Panel>
+                <Rectangle Stroke="Gray" 
+                           StrokeThickness="2" 
+                           StrokeDashArray="4,4" 
+                           RadiusX="8" 
+                           RadiusY="8"
+                           Fill="Transparent" />
+                
+                <TextBlock Text="Drag the file here" 
+                           HorizontalAlignment="Center" 
+                           VerticalAlignment="Center"
+                           Foreground="LightGray"
+                           FontSize="18"/>
+            </Panel>
+        </Border>
+
+        <StackPanel Grid.Row="1" Margin="0,20,0,20" Spacing="10">
+            <ProgressBar Value="{Binding ProgressValue}" 
+                         Minimum="0" Maximum="100" 
+                         Height="20" 
+                         ShowProgressText="True"/>
+            <Button Content="Cancel" 
+                    Command="{Binding Cancel}" 
+                    IsEnabled="{Binding IsBusy}"
+                    HorizontalAlignment="Center"
+                    Width="150"
+                    HorizontalContentAlignment="Center"/>
+        </StackPanel>
+
+        <TextBox Grid.Row="2" 
+                 Text="{Binding LogText}" 
+                 IsReadOnly="True" 
+                 TextWrapping="Wrap"
+                 AcceptsReturn="True"
+                 ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+    </Grid>
+</Window>
