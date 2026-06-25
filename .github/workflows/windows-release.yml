@@ -21,8 +21,7 @@ jobs:
       run: |
         dotnet publish BitConverter.UI/BitConverter.UI.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=false -o ./publish
 
-    # ЗАМІНА: Встановлюємо Inno Setup через офіційний шоколадний менеджер пакетів Windows
-    name: Install Inno Setup
+    - name: Install Inno Setup
       run: |
         choco install innosetup -y
 
@@ -47,7 +46,6 @@ jobs:
         Name: "{group}\BitConverter"; Filename: "{app}\BitConverter.exe"
         Name: "{commondesktops}\BitConverter"; Filename: "{app}\BitConverter.exe"
         "@
-        # Викликаємо ISCC безпосередньо з системного шляху Windows
         & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" setup.iss
 
     - name: Upload Installer Artifact
