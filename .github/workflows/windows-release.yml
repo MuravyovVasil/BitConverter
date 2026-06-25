@@ -1,0 +1,56 @@
+name: Build Windows Installer
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Publish App
+      run: |
+        dotnet publish BitConverter.UI/BitConverter.UI.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=false -o ./publish
+
+    - name: Compile Installer via Inno Setup
+      uses: aminya/setup-innosetup@v1
+      with:
+        inno-version: 6.2.2
+
+    - name: Build Installer EXE
+      run: |
+        New-Item -Path . -Name "setup.iss" -ItemType "file" -Value @"
+        [Setup]
+        AppName=BitConverter
+        AppVersion=3.0.0
+        DefaultDirName={autopf}\BitConverter
+        DefaultGroupName=BitConverter
+        OutputDir=.\installer
+        OutputBaseFilename=BitConverterSetup
+        Compression=lzma
+        SolidCompression=yes
+        DisableProgramGroupPage=yes
+
+        [Files]
+        Source: ".\publish\*"; DestDir: "{app}"; Flags: recursesubdirs createallsubdirs
+
+        [Icons]
+        Name: "{group}\BitConverter"; Filename: "{app}\BitConverter.exe"
+        Name: "{commondesktops}\BitConverter"; Filename: "{app}\BitConverter.exe"
+        "@
+        iscc setup.iss
+
+    - name: Upload Installer Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: BitConverterSetup-Windows
+        path: ./installer/BitConverterSetup.exe
