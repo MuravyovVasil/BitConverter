@@ -21,9 +21,11 @@ jobs:
       run: |
         dotnet publish BitConverter.UI/BitConverter.UI.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=false -o ./publish
 
-    - name: Install Inno Setup
+    # Завантажуємо портативний офіційний компилятор Inno Setup безпосередньо, без choco
+    - name: Download Inno Setup Portable
       run: |
-        choco install innosetup -y
+        curl -L -o innosetup.zip https://files.jrsoftware.org/is/6/is-6.2.2-unicode.zip
+        Expand-Archive -Path innosetup.zip -DestinationPath .\iscc
 
     - name: Build Installer EXE
       run: |
@@ -46,7 +48,8 @@ jobs:
         Name: "{group}\BitConverter"; Filename: "{app}\BitConverter.exe"
         Name: "{commondesktops}\BitConverter"; Filename: "{app}\BitConverter.exe"
         "@
-        & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" setup.iss
+        # Викликаємо завантажений портативний компилятор
+        .\iscc\ISCC.exe setup.iss
 
     - name: Upload Installer Artifact
       uses: actions/upload-artifact@v4
