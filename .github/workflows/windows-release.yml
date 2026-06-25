@@ -21,14 +21,9 @@ jobs:
       run: |
         dotnet publish BitConverter.UI/BitConverter.UI.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=false -o ./publish
 
-    # Офіційний екшен, який залізобетонно ставить Inno Setup і реєструє його в системі
-    - name: Install Inno Setup
-      uses: jettools/innosetup-action@v1
-      with:
-        version: 6.2.2
-
     - name: Build Installer EXE
       run: |
+        # Створюємо скрипт конфігурації для інсталятора
         New-Item -Path . -Name "setup.iss" -ItemType "file" -Value @"
         [Setup]
         AppName=BitConverter
@@ -48,8 +43,9 @@ jobs:
         Name: "{group}\BitConverter"; Filename: "{app}\BitConverter.exe"
         Name: "{commondesktops}\BitConverter"; Filename: "{app}\BitConverter.exe"
         "@
-        # Тепер ISCC доступний глобально в системі як звичайна команда
-        iscc setup.iss
+        
+        # Викликаємо дефолтний вбудований Inno Setup, який вже є на серверах GitHub
+        & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" setup.iss
 
     - name: Upload Installer Artifact
       uses: actions/upload-artifact@v4
