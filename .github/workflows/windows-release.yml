@@ -23,7 +23,6 @@ jobs:
 
     - name: Build Installer EXE
       run: |
-        # Створюємо скрипт конфігурації для інсталятора з виправленими комами
         New-Item -Path . -Name "setup.iss" -ItemType "file" -Value @"
         [Setup]
         AppName=BitConverter
@@ -41,10 +40,9 @@ jobs:
 
         [Icons]
         Name: "{group}\BitConverter"; Filename: "{app}\BitConverter.exe"
-        Name: "{commondesktops}\BitConverter"; Filename: "{app}\BitConverter.exe"
+        Name: "{autodesktop}\BitConverter"; Filename: "{app}\BitConverter.exe"
         "@
         
-        # Викликаємо вбудований Inno Setup
         & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" setup.iss
 
     - name: Upload Installer Artifact
